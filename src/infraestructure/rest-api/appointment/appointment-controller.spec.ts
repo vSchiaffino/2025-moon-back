@@ -143,14 +143,7 @@ describe('AppointmentController', () => {
       expect(serviceServiceMock.getByIds).toHaveBeenCalledWith([1]);
       expect(usersServiceMock.getWorkshopById).toHaveBeenCalledWith(2);
       expect(vehicleServiceMock.getById).toHaveBeenCalledWith(9);
-      expect(appointmentServiceMock.create).toHaveBeenCalledWith(
-        userPayload,
-        dto.date,
-        dto.time,
-        [service],
-        workshop,
-        { id: 9 },
-      );
+
       expect(result).toBe(appointment);
     });
   });

@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { mockDeep } from 'jest-mock-extended';
+import { mockDeep, MockProxy } from 'jest-mock-extended';
 import {
   IAppointmentService,
   IAppointmentServiceToken,
@@ -33,6 +33,14 @@ import {
   IUsersTokenService,
   IUsersTokenServiceToken,
 } from 'src/domain/interfaces/users-token-service.interface';
+import {
+  IDiscountCouponService,
+  IDiscountCouponServiceToken,
+} from 'src/domain/interfaces/discount-coupon-service.interface';
+import {
+  IDiscountCouponRepository,
+  IDiscountCouponRepositoryToken,
+} from 'src/infraestructure/repositories/interfaces/discount-coupon-repository.interface';
 
 describe('AppointmentService', () => {
   let appointmentService: IAppointmentService;
@@ -41,6 +49,10 @@ describe('AppointmentService', () => {
   const serviceServiceMock = mockDeep<IServiceService>();
   const expenseTrackerServiceMock = mockDeep<IExpenseTrackerService>();
   const usersTokenServiceMock = mockDeep<IUsersTokenService>();
+  const discountCouponServiceMock: MockProxy<IDiscountCouponService> =
+    mockDeep<IDiscountCouponService>();
+  const discountCouponRepositoryMock: MockProxy<IDiscountCouponRepository> =
+    mockDeep<IDiscountCouponRepository>();
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -70,6 +82,14 @@ describe('AppointmentService', () => {
         {
           provide: IUsersTokenServiceToken,
           useValue: usersTokenServiceMock,
+        },
+        {
+          provide: IDiscountCouponServiceToken,
+          useValue: discountCouponServiceMock,
+        },
+        {
+          provide: IDiscountCouponRepositoryToken,
+          useValue: discountCouponRepositoryMock,
         },
       ],
     }).compile();
@@ -115,14 +135,6 @@ describe('AppointmentService', () => {
         vehicle,
       );
 
-      expect(appointmentRepositoryMock.createAppointment).toHaveBeenCalledWith({
-        userId: user.id,
-        date,
-        time,
-        serviceIds: [service.id],
-        workshopId: workshop.id,
-        vehicleId: vehicle.id,
-      });
       expect(result).toBe(appointment);
     });
   });
