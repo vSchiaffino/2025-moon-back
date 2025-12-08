@@ -7,12 +7,14 @@ import {
   JoinColumn,
   JoinTable,
   ManyToMany,
+  OneToOne,
 } from 'typeorm';
 import { Service } from '../service/service.entity';
 import { User } from '../user/user.entity';
 import { Vehicle } from '../vehicle/vehicle.entity';
 import { AppointmentStatus } from './appointment-status.enum';
 import { DiscountCoupon } from '../user/discount-coupon.entity';
+import { WorkItem } from '../work-item/work-item.entity';
 
 @Entity('appointments')
 export class Appointment extends BaseEntity {
@@ -64,4 +66,7 @@ export class Appointment extends BaseEntity {
   @ManyToOne(() => DiscountCoupon, { nullable: true })
   @JoinColumn({ name: 'discountCouponId' })
   discountCoupon?: DiscountCoupon | null;
+
+  @OneToOne(() => WorkItem, (workItem) => workItem.appointment)
+  workItem: WorkItem;
 }

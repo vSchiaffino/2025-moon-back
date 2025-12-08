@@ -23,6 +23,10 @@ export class RampService implements IRampService {
     private readonly rampRepository: IRampRepository,
   ) {}
 
+  getRampById(rampId: number) {
+    return this.rampRepository.findRampById(rampId);
+  }
+
   async deleteRamp(mechanic: JwtPayload, id: string) {
     const ramp = await this.rampRepository.findOne({
       where: { id: Number(id) },
@@ -38,7 +42,6 @@ export class RampService implements IRampService {
     id: string,
     dto: CreateRampDto,
   ): Promise<Ramp> {
-    console.log(id);
     const ramp = await this.rampRepository.findOne({
       where: { id: Number(id) },
       relations: ['user'],

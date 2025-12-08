@@ -15,6 +15,7 @@ import { NotificationModule } from './rest-api/notification/notification.module'
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { GoalModule } from './rest-api/goal/goal.module';
 import { RampModule } from './rest-api/ramp/ramp.module';
+import { WorkItemModule } from './rest-api/work-item/work-item.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { RampModule } from './rest-api/ramp/ramp.module';
     NotificationModule,
     GoalModule,
     RampModule,
+    WorkItemModule,
     EventEmitterModule.forRoot(),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],

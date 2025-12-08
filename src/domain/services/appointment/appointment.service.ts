@@ -62,6 +62,13 @@ export class AppointmentService implements IAppointmentService {
     private usersTokenService: IUsersTokenService,
   ) {}
 
+  getAppointmentById(appointmentId: number): Promise<Appointment | null> {
+    return this.appointmentRepository.findOne({
+      where: { id: appointmentId },
+      relations: ['user'],
+    });
+  }
+
   async findById(id: number): Promise<Appointment> {
     const appointment = await this.appointmentRepository.findById(id);
     if (!appointment) {

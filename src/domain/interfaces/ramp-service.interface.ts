@@ -13,6 +13,7 @@ export interface IRampService {
   ): Promise<PaginatedResultDto<Ramp>>;
   getRampTypesFor(mechanic: JwtPayload): Promise<string[]>;
   createRamp(mechanic: JwtPayload, dto: CreateRampDto): Promise<Ramp>;
+  getRampById(rampId: number): Promise<Ramp | null>;
 }
 
 export const IRampServiceToken = 'IRampService';

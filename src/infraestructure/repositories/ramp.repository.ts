@@ -14,6 +14,10 @@ export class RampRepository
     super(Ramp, dataSource.createEntityManager());
   }
 
+  findRampById(rampId: number) {
+    return this.findOne({ where: { id: rampId }, relations: ['user'] });
+  }
+
   async getRampsOf(
     id: number,
     query: PaginatedQueryDto,

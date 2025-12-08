@@ -13,6 +13,7 @@ export interface IRampRepository extends IBaseRepository<Ramp> {
     code: string,
     mechanicId: number,
   ): Promise<Ramp | null>;
+  findRampById(rampId: number): Promise<Ramp | null>;
 }
 
 export const IRampRepositoryToken = 'IRampRepository';
