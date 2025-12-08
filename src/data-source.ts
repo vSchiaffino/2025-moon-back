@@ -14,6 +14,7 @@ import { DiscountCoupon } from './infraestructure/entities/user/discount-coupon.
 import { UserToken } from './infraestructure/entities/user/user-tokens';
 import { Ramp } from './infraestructure/entities/ramp/ramp.entity';
 import { WorkItem } from './infraestructure/entities/work-item/work-item.entity';
+import { WorkItemLog } from './infraestructure/entities/work-item/work-item-log.entity';
 
 export const entities = [
   User,
@@ -30,6 +31,7 @@ export const entities = [
   DiscountCoupon,
   Ramp,
   WorkItem,
+  WorkItemLog,
 ];
 
 export const createDataSource = (configService: ConfigService) =>

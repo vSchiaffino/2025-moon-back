@@ -6,10 +6,11 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtPayload } from 'src/domain/dtos/jwt-payload.interface';
-import { PaginatedQueryDto } from 'src/domain/dtos/paginated-query.dto';
 import { PaginatedResultDto } from 'src/domain/dtos/paginated-result.dto';
 import { IRampService } from 'src/domain/interfaces/ramp-service.interface';
 import { CreateRampDto } from 'src/infraestructure/dtos/ramp/create-ramp.dto';
+import { GetManyRampsQueryDto } from 'src/infraestructure/dtos/ramp/get-many-ramps-query.dto';
+import { RampState } from 'src/infraestructure/entities/ramp/ramp-state.enum';
 import { Ramp } from 'src/infraestructure/entities/ramp/ramp.entity';
 import {
   type IRampRepository,
@@ -22,6 +23,13 @@ export class RampService implements IRampService {
     @Inject(IRampRepositoryToken)
     private readonly rampRepository: IRampRepository,
   ) {}
+
+  async updateRampState(rampId: number, newState: RampState): Promise<void> {
+    const ramp = await this.rampRepository.findRampById(rampId);
+    if (!ramp) throw new NotFoundException();
+    ramp.state = newState;
+    await this.rampRepository.save(ramp);
+  }
 
   getRampById(rampId: number) {
     return this.rampRepository.findRampById(rampId);
@@ -63,7 +71,7 @@ export class RampService implements IRampService {
 
   getRampsOf(
     mechanic: JwtPayload,
-    query: PaginatedQueryDto,
+    query: GetManyRampsQueryDto,
   ): Promise<PaginatedResultDto<Ramp>> {
     return this.rampRepository.getRampsOf(mechanic.id, query);
   }

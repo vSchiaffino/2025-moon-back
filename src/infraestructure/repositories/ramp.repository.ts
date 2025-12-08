@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { DataSource, ILike, Repository } from 'typeorm';
+import { DataSource, ILike, In, Repository } from 'typeorm';
 import { Ramp } from '../entities/ramp/ramp.entity';
 import { IRampRepository } from './interfaces/ramp-repository.interface';
-import { PaginatedQueryDto } from 'src/domain/dtos/paginated-query.dto';
 import { PaginatedResultDto } from 'src/domain/dtos/paginated-result.dto';
+import { GetManyRampsQueryDto } from '../dtos/ramp/get-many-ramps-query.dto';
 
 @Injectable()
 export class RampRepository
@@ -20,11 +20,16 @@ export class RampRepository
 
   async getRampsOf(
     id: number,
-    query: PaginatedQueryDto,
+    query: GetManyRampsQueryDto,
   ): Promise<PaginatedResultDto<Ramp>> {
-    const { orderBy, orderDir, page, pageSize, search } = query;
+    const { orderBy, orderDir, page, pageSize, search, states } = query;
+
     const [data, total] = await this.findAndCount({
-      where: { user: { id }, code: search ? ILike(`%${search}%`) : undefined },
+      where: {
+        user: { id },
+        code: search ? ILike(`%${search}%`) : undefined,
+        state: states ? In(states.split(',')) : undefined,
+      },
       take: pageSize,
       skip: ((page || 1) - 1) * (pageSize || 10),
       order: {

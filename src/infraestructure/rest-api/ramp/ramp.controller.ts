@@ -16,7 +16,7 @@ import {
 import { AuthenticatedWorkshop } from '../decorators/authenticated-mechanic.decorator';
 import { type JwtPayload } from 'src/domain/dtos/jwt-payload.interface';
 import { CreateRampDto } from 'src/infraestructure/dtos/ramp/create-ramp.dto';
-import { PaginatedQueryDto } from 'src/domain/dtos/paginated-query.dto';
+import { GetManyRampsQueryDto } from 'src/infraestructure/dtos/ramp/get-many-ramps-query.dto';
 
 @Controller('ramps')
 export class RampController {
@@ -41,7 +41,7 @@ export class RampController {
   @Get()
   getRamps(
     @AuthenticatedWorkshop() mechanic: JwtPayload,
-    @Query() query: PaginatedQueryDto,
+    @Query() query: GetManyRampsQueryDto,
   ) {
     return this.rampService.getRampsOf(mechanic, query);
   }

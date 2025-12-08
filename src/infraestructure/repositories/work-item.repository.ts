@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 import { WorkItem } from '../entities/work-item/work-item.entity';
 import { IWorkItemRepository } from './interfaces/work-item-repository.interface';
+import { PaginatedQueryDto } from 'src/domain/dtos/paginated-query.dto';
+import { PaginatedResultDto } from 'src/domain/dtos/paginated-result.dto';
 
 @Injectable()
 export class WorkItemRepository
@@ -10,5 +12,43 @@ export class WorkItemRepository
 {
   constructor(private dataSource: DataSource) {
     super(WorkItem, dataSource.createEntityManager());
+  }
+
+  getDetail(id: number): Promise<WorkItem | null> {
+    return this.findOne({
+      where: { id },
+      relations: ['ramp', 'logs', 'mechanic', 'appointment'],
+    });
+  }
+
+  findById(id: number): Promise<WorkItem | null> {
+    return this.findOne({
+      where: { id },
+      relations: ['mechanic', 'ramp', 'appointment'],
+    });
+  }
+
+  async getMany(
+    workShopId: number,
+    query: PaginatedQueryDto,
+  ): Promise<PaginatedResultDto<WorkItem>> {
+    const { orderBy, orderDir, page, pageSize } = query;
+    const [data, total] = await this.findAndCount({
+      where: { mechanic: { id: workShopId } },
+      take: pageSize,
+      skip: ((page || 1) - 1) * (pageSize || 10),
+      order: {
+        [orderBy || 'id']: orderDir || 'DESC',
+      },
+      relations: ['ramp'],
+    });
+    return {
+      total,
+      data,
+      orderBy: query.orderBy || 'id',
+      orderDir: query.orderDir || 'DESC',
+      page: page || 1,
+      pageSize: pageSize || 10,
+    };
   }
 }
