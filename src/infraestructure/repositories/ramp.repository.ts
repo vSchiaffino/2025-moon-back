@@ -6,6 +6,7 @@ import { PaginatedResultDto } from 'src/domain/dtos/paginated-result.dto';
 import { GetManyRampsQueryDto } from '../dtos/ramp/get-many-ramps-query.dto';
 import { JwtPayload } from 'src/domain/dtos/jwt-payload.interface';
 import { RampDashboardData } from 'src/domain/interfaces/ramp-service.interface';
+import { WorkItemState } from '../entities/work-item/work-item-state.enum';
 
 @Injectable()
 export class RampRepository
@@ -24,7 +25,9 @@ export class RampRepository
       .from('work_items', 'work_items')
       .innerJoin('ramps', 'ramps', 'ramps.id = work_items.rampId')
       .where('work_items.userId = :userId', { userId })
+      .where('work_items.state = :doneState', { doneState: WorkItemState.DONE })
       .groupBy('work_items.rampId')
+      .addOrderBy('quantity', 'DESC')
       .addGroupBy('ramps.code')
       .getRawMany();
   }

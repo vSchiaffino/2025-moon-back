@@ -10,6 +10,8 @@ import { CreateWorkItemDto } from 'src/infraestructure/dtos/work-item/create-wor
 import {
   type IWorkItemRepository,
   IWorkItemRepositoryToken,
+  MechanicHoursData,
+  ServicesHoursData,
 } from 'src/infraestructure/repositories/interfaces/work-item-repository.interface';
 import {
   IAppointmentServiceToken,
@@ -43,6 +45,14 @@ export class WorkItemService implements IWorkItemService {
     @Inject(IWorkItemLogRepositoryToken)
     private workItemLogRepository: IWorkItemLogRepository,
   ) {}
+
+  getServicesHoursData(mechanic: JwtPayload): Promise<ServicesHoursData[]> {
+    return this.workItemRepository.getServicesHoursData(mechanic.id);
+  }
+
+  getMechanicHoursData(mechanic: JwtPayload): Promise<MechanicHoursData[]> {
+    return this.workItemRepository.getMechanicHoursData(mechanic.id);
+  }
 
   async editWorkItemState(
     id: number,

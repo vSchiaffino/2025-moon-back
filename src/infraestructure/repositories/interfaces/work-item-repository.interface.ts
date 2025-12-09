@@ -3,7 +3,19 @@ import { IBaseRepository } from './base-repository.interface';
 import { PaginatedResultDto } from 'src/domain/dtos/paginated-result.dto';
 import { GetManyWorkItemsQueryDto } from 'src/infraestructure/dtos/work-item/get-many-work-item-query.dto';
 
+export interface ServicesHoursData {
+  serviceName: string;
+  avgHours: number;
+}
+
+export interface MechanicHoursData {
+  mechanicName: string;
+  hours: number;
+}
+
 export interface IWorkItemRepository extends IBaseRepository<WorkItem> {
+  getServicesHoursData(mechanicId: number): Promise<ServicesHoursData[]>;
+  getMechanicHoursData(mechanicId: number): Promise<MechanicHoursData[]>;
   getDetail(id: number): Promise<WorkItem | null>;
   findById(id: number): Promise<WorkItem | null>;
   getMany(

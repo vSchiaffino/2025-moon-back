@@ -68,4 +68,14 @@ export class WorkItemController {
   ) {
     return this.workItemService.getWorkItemDetail(mechanic, id);
   }
+
+  @Get('/dashboard/mechanic-hours')
+  getMechanicHoursData(@AuthenticatedWorkshop() mechanic: JwtPayload) {
+    return this.workItemService.getMechanicHoursData(mechanic);
+  }
+
+  @Get('/dashboard/services-hours')
+  getServicesHoursData(@AuthenticatedWorkshop() mechanic: JwtPayload) {
+    return this.workItemService.getServicesHoursData(mechanic);
+  }
 }

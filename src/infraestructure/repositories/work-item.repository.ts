@@ -1,8 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource, In, Repository } from 'typeorm';
 import { WorkItem } from '../entities/work-item/work-item.entity';
-import { IWorkItemRepository } from './interfaces/work-item-repository.interface';
-import { PaginatedQueryDto } from 'src/domain/dtos/paginated-query.dto';
+import {
+  IWorkItemRepository,
+  MechanicHoursData,
+  ServicesHoursData,
+} from './interfaces/work-item-repository.interface';
 import { PaginatedResultDto } from 'src/domain/dtos/paginated-result.dto';
 import { GetManyWorkItemsQueryDto } from '../dtos/work-item/get-many-work-item-query.dto';
 
@@ -13,6 +16,44 @@ export class WorkItemRepository
 {
   constructor(private dataSource: DataSource) {
     super(WorkItem, dataSource.createEntityManager());
+  }
+
+  async getServicesHoursData(mechanicId: number): Promise<ServicesHoursData[]> {
+    const raws = await this.dataSource
+      .createQueryBuilder()
+      .select('s.name', 'serviceName')
+      .addSelect('AVG(wi.realWorkTimeMs) / 3600000', 'avgHours')
+      .from('work_items', 'wi')
+      .innerJoin('appointments', 'a', 'wi.appointmentId = a.id')
+      .innerJoin('appointment_services', 'aps', 'aps.appointment_id = a.id')
+      .innerJoin('services', 's', 's.id = aps.service_id')
+      .where('wi.realWorkTimeMs IS NOT NULL')
+      .andWhere('wi.userId = :id', { id: mechanicId })
+      .groupBy('aps.service_id')
+      .addGroupBy('s.name')
+      .orderBy('"avgHours"', 'DESC')
+      .getRawMany();
+
+    return raws.map((raw) => ({
+      serviceName: raw.serviceName,
+      avgHours: Number(raw.avgHours),
+    }));
+  }
+
+  async getMechanicHoursData(mechanicId: number): Promise<MechanicHoursData[]> {
+    const raws = await this.createQueryBuilder()
+      .select('wi.mechanicName')
+      .addSelect('SUM(wi.realWorkTimeMs) / 3600000', 'hours')
+      .from('work_items', 'wi')
+      .where('wi.userId = :id', { id: mechanicId })
+      .andWhere(`wi.realWorkTimeMs IS NOT NULL`)
+      .groupBy('wi.mechanicName')
+      .orderBy(`hours`, 'DESC')
+      .getRawMany();
+    return raws.map((raw) => ({
+      hours: raw.hours,
+      mechanicName: raw.wi_mechanicName,
+    }));
   }
 
   getDetail(id: number): Promise<WorkItem | null> {
