@@ -5,7 +5,13 @@ import { PaginatedResultDto } from '../dtos/paginated-result.dto';
 import { RampState } from 'src/infraestructure/entities/ramp/ramp-state.enum';
 import { GetManyRampsQueryDto } from 'src/infraestructure/dtos/ramp/get-many-ramps-query.dto';
 
+export interface RampDashboardData {
+  rampName: string;
+  quantity: number;
+}
+
 export interface IRampService {
+  getDashboardRampsData(mechanic: JwtPayload): Promise<RampDashboardData[]>;
   deleteRamp(mechanic: JwtPayload, id: string);
   editRamp(mechanic: JwtPayload, id: string, dto: CreateRampDto): Promise<Ramp>;
   getRampsOf(

@@ -62,4 +62,9 @@ export class RampController {
   ) {
     return this.rampService.deleteRamp(mechanic, id);
   }
+
+  @Get('/dashboard')
+  getRampsData(@AuthenticatedWorkshop() mechanic: JwtPayload) {
+    return this.rampService.getDashboardRampsData(mechanic);
+  }
 }

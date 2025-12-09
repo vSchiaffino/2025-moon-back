@@ -4,6 +4,8 @@ import { Ramp } from '../entities/ramp/ramp.entity';
 import { IRampRepository } from './interfaces/ramp-repository.interface';
 import { PaginatedResultDto } from 'src/domain/dtos/paginated-result.dto';
 import { GetManyRampsQueryDto } from '../dtos/ramp/get-many-ramps-query.dto';
+import { JwtPayload } from 'src/domain/dtos/jwt-payload.interface';
+import { RampDashboardData } from 'src/domain/interfaces/ramp-service.interface';
 
 @Injectable()
 export class RampRepository
@@ -12,6 +14,19 @@ export class RampRepository
 {
   constructor(private dataSource: DataSource) {
     super(Ramp, dataSource.createEntityManager());
+  }
+
+  getDashboardRampsData(userId: number): Promise<RampDashboardData[]> {
+    return this.dataSource
+      .createQueryBuilder()
+      .select('ramps.code', 'rampName')
+      .addSelect('COUNT(work_items.id)', 'quantity')
+      .from('work_items', 'work_items')
+      .innerJoin('ramps', 'ramps', 'ramps.id = work_items.rampId')
+      .where('work_items.userId = :userId', { userId })
+      .groupBy('work_items.rampId')
+      .addGroupBy('ramps.code')
+      .getRawMany();
   }
 
   findRampById(rampId: number) {

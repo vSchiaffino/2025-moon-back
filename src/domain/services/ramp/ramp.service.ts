@@ -7,7 +7,10 @@ import {
 } from '@nestjs/common';
 import { JwtPayload } from 'src/domain/dtos/jwt-payload.interface';
 import { PaginatedResultDto } from 'src/domain/dtos/paginated-result.dto';
-import { IRampService } from 'src/domain/interfaces/ramp-service.interface';
+import {
+  IRampService,
+  RampDashboardData,
+} from 'src/domain/interfaces/ramp-service.interface';
 import { CreateRampDto } from 'src/infraestructure/dtos/ramp/create-ramp.dto';
 import { GetManyRampsQueryDto } from 'src/infraestructure/dtos/ramp/get-many-ramps-query.dto';
 import { RampState } from 'src/infraestructure/entities/ramp/ramp-state.enum';
@@ -23,6 +26,10 @@ export class RampService implements IRampService {
     @Inject(IRampRepositoryToken)
     private readonly rampRepository: IRampRepository,
   ) {}
+
+  getDashboardRampsData(mechanic: JwtPayload): Promise<RampDashboardData[]> {
+    return this.rampRepository.getDashboardRampsData(mechanic.id);
+  }
 
   async updateRampState(rampId: number, newState: RampState): Promise<void> {
     const ramp = await this.rampRepository.findRampById(rampId);
