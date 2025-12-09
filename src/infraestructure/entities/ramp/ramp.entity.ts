@@ -1,6 +1,7 @@
 import {
   BaseEntity,
   Column,
+  DeleteDateColumn,
   Entity,
   ManyToOne,
   OneToMany,
@@ -29,4 +30,7 @@ export class Ramp extends BaseEntity {
 
   @OneToMany(() => WorkItem, (workItem) => workItem.ramp)
   workItems: WorkItem[];
+
+  @DeleteDateColumn()
+  deletedAt: Date;
 }

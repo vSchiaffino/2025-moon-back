@@ -47,4 +47,10 @@ export class WorkItem extends BaseEntity {
 
   @CreateDateColumn()
   createdAt: Date;
+
+  @Column({ nullable: true, default: null })
+  finishedAt?: Date;
+
+  @Column({ nullable: true, default: null })
+  realWorkTimeMs?: number;
 }

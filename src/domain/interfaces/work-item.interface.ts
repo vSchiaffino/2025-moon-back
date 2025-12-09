@@ -5,6 +5,7 @@ import { PaginatedResultDto } from '../dtos/paginated-result.dto';
 import { WorkItem } from 'src/infraestructure/entities/work-item/work-item.entity';
 import { EditWorkItemDto } from 'src/infraestructure/dtos/work-item/edit-work-item.dto';
 import { EditWorkItemStateDto } from 'src/infraestructure/dtos/work-item/edit-work-item-state.dto';
+import { GetManyWorkItemsQueryDto } from 'src/infraestructure/dtos/work-item/get-many-work-item-query.dto';
 
 export interface IWorkItemService {
   editWorkItemState(
@@ -19,7 +20,7 @@ export interface IWorkItemService {
   ): Promise<WorkItem>;
   getWorkItems(
     mechanic: JwtPayload,
-    query: PaginatedQueryDto,
+    query: GetManyWorkItemsQueryDto,
   ): Promise<PaginatedResultDto<WorkItem>>;
   createWorkItem(
     mechanic: JwtPayload,

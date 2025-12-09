@@ -16,9 +16,9 @@ import {
 import { AuthenticatedWorkshop } from '../decorators/authenticated-mechanic.decorator';
 import { type JwtPayload } from 'src/domain/dtos/jwt-payload.interface';
 import { CreateWorkItemDto } from 'src/infraestructure/dtos/work-item/create-work-item.dto';
-import { PaginatedQueryDto } from 'src/domain/dtos/paginated-query.dto';
 import { EditWorkItemDto } from 'src/infraestructure/dtos/work-item/edit-work-item.dto';
 import { EditWorkItemStateDto } from 'src/infraestructure/dtos/work-item/edit-work-item-state.dto';
+import { GetManyWorkItemsQueryDto } from 'src/infraestructure/dtos/work-item/get-many-work-item-query.dto';
 
 @Controller('work-items')
 export class WorkItemController {
@@ -56,7 +56,7 @@ export class WorkItemController {
   @Get()
   getWorkItems(
     @AuthenticatedWorkshop() mechanic: JwtPayload,
-    @Query() query: PaginatedQueryDto,
+    @Query() query: GetManyWorkItemsQueryDto,
   ) {
     return this.workItemService.getWorkItems(mechanic, query);
   }

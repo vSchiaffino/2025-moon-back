@@ -42,7 +42,7 @@ export class RampService implements IRampService {
     });
     if (!ramp) throw new NotFoundException('Ramp not found');
     if (ramp.user.id !== mechanic.id) throw new UnauthorizedException();
-    await this.rampRepository.delete(ramp.id);
+    await this.rampRepository.softDelete(ramp.id);
   }
 
   async editRamp(

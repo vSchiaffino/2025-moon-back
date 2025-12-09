@@ -20,7 +20,6 @@ import {
   type IRampService,
   IRampServiceToken,
 } from 'src/domain/interfaces/ramp-service.interface';
-import { PaginatedQueryDto } from 'src/domain/dtos/paginated-query.dto';
 import { PaginatedResultDto } from 'src/domain/dtos/paginated-result.dto';
 import { WorkItem } from 'src/infraestructure/entities/work-item/work-item.entity';
 import { EditWorkItemDto } from 'src/infraestructure/dtos/work-item/edit-work-item.dto';
@@ -31,6 +30,7 @@ import {
 } from 'src/infraestructure/repositories/interfaces/work-item-log-repository.interface';
 import { WorkItemState } from 'src/infraestructure/entities/work-item/work-item-state.enum';
 import { RampState } from 'src/infraestructure/entities/ramp/ramp-state.enum';
+import { GetManyWorkItemsQueryDto } from 'src/infraestructure/dtos/work-item/get-many-work-item-query.dto';
 
 export class WorkItemService implements IWorkItemService {
   constructor(
@@ -68,7 +68,33 @@ export class WorkItemService implements IWorkItemService {
       previousState,
       updatedWorkItem.state,
     );
+    if (
+      updatedWorkItem.state === WorkItemState.CANCELLED ||
+      updatedWorkItem.state === WorkItemState.DONE
+    ) {
+      updatedWorkItem.finishedAt = new Date();
+      updatedWorkItem.realWorkTimeMs = await this.calculateRealWorkTime(
+        updatedWorkItem.id,
+      );
+      await this.workItemRepository.save(updatedWorkItem);
+    }
     return updatedWorkItem;
+  }
+
+  private async calculateRealWorkTime(workItemId: number) {
+    let realWorkTimeMs = 0;
+    const workItem = await this.workItemRepository.getDetail(workItemId);
+    if (!workItem) throw new NotFoundException();
+    workItem.logs.forEach((item, i) => {
+      if (item.toState === WorkItemState.WORKING) {
+        const nextLog = workItem.logs.at(i + 1);
+        if (!nextLog) return;
+        const msDifference =
+          nextLog.createdAt.getTime() - item.createdAt.getTime();
+        realWorkTimeMs += msDifference;
+      }
+    });
+    return realWorkTimeMs;
   }
 
   async updateAppointmentState(
@@ -137,7 +163,7 @@ export class WorkItemService implements IWorkItemService {
 
   getWorkItems(
     mechanic: JwtPayload,
-    query: PaginatedQueryDto,
+    query: GetManyWorkItemsQueryDto,
   ): Promise<PaginatedResultDto<WorkItem>> {
     return this.workItemRepository.getMany(mechanic.id, query);
   }
