@@ -28,11 +28,14 @@ export class WorkItemController {
   ) {}
 
   @Post()
-  createWorkItem(
+  async createWorkItem(
     @AuthenticatedWorkshop() mechanic: JwtPayload,
     @Body() dto: CreateWorkItemDto,
   ) {
-    return this.workItemService.createWorkItem(mechanic, dto);
+    const ret = await this.workItemService.createWorkItem(mechanic, dto);
+    // @ts-expect-error dont hashedPassword
+    ret.mechanic.hashedPassword = undefined;
+    return ret;
   }
 
   @Put('/:id')

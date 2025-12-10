@@ -109,12 +109,8 @@ export class AppointmentController {
     if (!vehicle) {
       throw new NotFoundException('Vehicle not found');
     }
-    // @ts-expect-error dont hashedPassword
-    workshop.hashedPassword = undefined;
-    // @ts-expect-error dont hashedPassword
-    user.hashedPassword = undefined;
 
-    return this.appointmentService.create(
+    const appointment = await this.appointmentService.create(
       user,
       dto.date,
       dto.time,
@@ -123,20 +119,42 @@ export class AppointmentController {
       vehicle,
       dto.couponCode ? Number(dto.couponCode) : undefined,
     );
+    // @ts-expect-error dont hashedPassword
+    appointment.workshop.hashedPassword = undefined;
+    // @ts-expect-error dont hashedPassword
+    appointment.user.hashedPassword = undefined;
+
+    return appointment;
   }
 
   @Put('/:id/status')
-  updateStatus(
+  async updateStatus(
     @AuthenticatedUser() user: JwtPayload,
     @Body() dto: UpdateAppointmentStatusDto,
     @Param('id', new ParseIntPipe()) id: number,
   ) {
-    return this.appointmentService.updateStatus(id, dto.status, user);
+    const appointment = await this.appointmentService.updateStatus(
+      id,
+      dto.status,
+      user,
+    );
+    // @ts-expect-error dont hashedPassword
+    appointment.workshop.hashedPassword = undefined;
+    // @ts-expect-error dont hashedPassword
+    appointment.user.hashedPassword = undefined;
+
+    return appointment;
   }
 
   @Get('/:id')
-  getAppointment(@Param('id', new ParseIntPipe()) id: number) {
-    return this.appointmentService.findDetailsById(id);
+  async getAppointment(@Param('id', new ParseIntPipe()) id: number) {
+    const appointment = await this.appointmentService.findDetailsById(id);
+    // @ts-expect-error dont hashedPassword
+    appointment.workshop.hashedPassword = undefined;
+    // @ts-expect-error dont hashedPassword
+    appointment.user.hashedPassword = undefined;
+
+    return appointment;
   }
 
   @Get('/workshop/range')
