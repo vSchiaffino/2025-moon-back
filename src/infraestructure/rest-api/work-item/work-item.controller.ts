@@ -36,21 +36,31 @@ export class WorkItemController {
   }
 
   @Put('/:id')
-  editWorkItem(
+  async editWorkItem(
     @AuthenticatedWorkshop() mechanic: JwtPayload,
     @Param('id', new ParseIntPipe()) id: number,
     @Body() dto: EditWorkItemDto,
   ) {
-    return this.workItemService.editWorkItem(id, mechanic, dto);
+    const ret = await this.workItemService.editWorkItem(id, mechanic, dto);
+    // @ts-expect-error dont hashedPassword
+    ret.mechanic.hashedPassword = undefined;
+    return ret;
   }
 
   @Put('/:id/state')
-  editWorkItemState(
+  async editWorkItemState(
     @AuthenticatedWorkshop() mechanic: JwtPayload,
     @Param('id', new ParseIntPipe()) id: number,
     @Body() dto: EditWorkItemStateDto,
   ) {
-    return this.workItemService.editWorkItemState(id, mechanic, dto);
+    const value = await this.workItemService.editWorkItemState(
+      id,
+      mechanic,
+      dto,
+    );
+    // @ts-expect-error dont hashedPassword
+    value.mechanic.hashedPassword = undefined;
+    return value;
   }
 
   @Get()
