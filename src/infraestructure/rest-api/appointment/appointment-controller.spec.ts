@@ -33,7 +33,7 @@ describe('AppointmentController', () => {
   const queryPayload = { dateFilter: DateFilter.FUTURE };
   const service = { id: 1 };
   const workshop = { id: 2 };
-  const appointment = { id: 'appointment-1' };
+  const appointment = { id: 'appointment-1', user: {}, workshop: {} };
 
   beforeEach(async () => {
     appointmentServiceMock = mockDeep<IAppointmentService>();
